@@ -5,7 +5,7 @@ def options = cli.parse(args)
 
 if (!options || options.h) {
     cli.usage()
-    return
+    exit(1)
 }
 if( !new File(options.f).exists() ) {
   println "File does not exist"
@@ -20,12 +20,13 @@ if( !new File(options.f).exists() ) {
   }
 }
 
-def outFile = new File(options.f.take(options.f.lastIndexOf('.'))+".adoc")
+def basename = options.f.take(options.f.lastIndexOf('.'))
+def outFile = new File(basename+".adoc")
 println "Writing to ${outFile.name}"
 outFile.withWriter { out ->
   dataList.eachWithIndex { it, index ->
     if(index==0) {
-	out.println "= PSI-MS Controlled Vocabulary"
+	out.println "= ${basename} Ontology "
 	out.println ":doctype: article"
 	out.println ":sectnums:"
 	out.println ":toc: left"
@@ -55,12 +56,21 @@ outFile.withWriter { out ->
       } else {
         v.each { value ->
           if(k.equals("is_a")) {
-	    def refId = value.split("!", 2)
-	    out.println "| $k | <<${refId[0].trim()}>> ! ${refId[1].trim()} "	
+            if(value.contains("!")) {
+	      def refId = value.split("!", 2)
+	      out.println "| $k | <<${refId[0].trim()}>> ! ${refId[1].trim()} "
+            } else {
+	      out.println "| $k | <<${value.trim()}>> "
+            }
 	  } else if(k.equals("relationship")) {
-	    def term = value.split("!")
-	    def refId = term[0].split(" ")
-	    out.println "| $k | ${refId[0]} <<${refId[1]}>> ! ${term[1]} "	
+            if(value.contains("!")) {
+	      def term = value.split("!")
+	      def refId = term[0].split(" ")
+	      out.println "| $k | ${refId[0]} <<${refId[1]}>> ! ${term[1]} "
+            } else if(value.contains(" ")) {
+	      def term = value.split(" ")
+	      out.println "| $k | ${term[0]} <<${term[1]}>> "
+            }
 	  } else {
 	    out.println "| $k | $value "
 	  }
