@@ -9,6 +9,8 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
+        - name: Install Asciidoctor
+          run: sudo apt install asciidoctor
         - name: Checkout
           uses: actions/checkout@v2
         - name: Setup JDK 11
