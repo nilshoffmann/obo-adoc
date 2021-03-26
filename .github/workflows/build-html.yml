@@ -22,7 +22,7 @@ jobs:
             sdk install groovy
         - name: Build Docs
           run: |
-            ./dtr.sh
+            source "/home/runner/.sdkman/bin/sdkman-init.sh" && ./dtr.sh
         - name: Set Git user
           run: |
             git config user.email "actions@github.com"
