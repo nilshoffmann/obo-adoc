@@ -10,7 +10,6 @@ Issues and pull requests welcome!
 - Linux / OSX with bash
 - Groovy >=2.4.12 (installation with SDKMAN (http://sdkman.io/))
 - asciidoctor (http://asciidoctor.org)
-- asciidoctor-pdf (https://github.com/asciidoctor/asciidoctor-pdf)
 
 ## How To Run
 Open a terminal and run
