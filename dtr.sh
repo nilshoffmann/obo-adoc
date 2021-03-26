@@ -5,6 +5,7 @@
 #fi
 mkdir -p target
 cd target/
+rm -r *.obo *.obo.adoc *.obo.adoc.html
 while IFS='' read -r line || [[ -n "$line" ]]; do
     wget -v $line 
     rc=$?
@@ -22,14 +23,24 @@ for i in *.obo; do
     exit $rc
   fi
 done
+cat <<END_HTML > index.html
+<html>
+        <head></head>
+        <body>
+                <h1>HTML Versions of selected Ontologies (from obo files)</h1>
+		<ul>
+END_HTML
 for i in *.adoc; do
-echo "Rendering asciidoc as html"
-asciidoctor -b html5 -o "$i.html" "$i"
-rc=$?
-if [ $rc -ne 0 ]; then
-  echo "Rendering exited with error code $rc" >&2
-  exit $rc
-fi
+  echo "Rendering asciidoc as html"
+  asciidoctor -b html5 -o "$i.html" "$i"
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "Rendering exited with error code $rc" >&2
+    exit $rc
+  fi
+  cat <<END_HTML >> index.html
+  <li><a href="$i.html">$i</a></li>
+END_HTML
 #echo "Rendering asciidoc as pdf"
 #asciidoctor-pdf "$i"
 #rc=$?
@@ -38,5 +49,10 @@ fi
 #  exit $rc
 #fi
 done
+cat <<END_HTML >> index.html
+</ul>
+</body>
+</html>
+END_HTML
 echo "Done!"
 cd ../
